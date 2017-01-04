@@ -14,6 +14,15 @@ window.onload = function() {
         document.getElementById('wsrl-main-display').appendChild(Game.getDisplay('main').getContainer());
         document.getElementById('wsrl-message-display').appendChild(Game.getDisplay('message').getContainer());
 
+        var bindEventToScreen = function(eventType) {
+          window.addEventListener(eventType, function(evt){
+            Game.eventHandler(eventType,evt);
+          });
+        };
+
+        bindEventToScreen('keypress');
+        bindEventToScreen('keydown');
+
         Game.switchUIMode(Game.UIMode.gameStart);
     }
 };
@@ -60,6 +69,13 @@ var Game = {
     console.dir(this.display);
   },
 
+  eventHandler: function(eventType, evt) {
+    if(this._curUIMode != null) {
+      this._curUIMode.handleInput(eventType, evt);
+    }
+  },
+
+
   getDisplay: function (displayId) {
     if (this.display.hasOwnProperty(displayId)) {
       return this.display[displayId].o;
@@ -80,6 +96,7 @@ var Game = {
   },
 
   renderMain: function() {
+    this.getDisplay("main").clear();
     this._curUIMode.render(this.getDisplay("main"));
     //var d = this.getDisplay("main");
       //d.drawText(5,5,"main display");

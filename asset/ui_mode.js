@@ -12,6 +12,7 @@ Game.UIMode.gameStart = {
   render: function (display) {
     console.log("render gameStart");
     display.drawText(5,5,"game start mode");
+    display.drawText(5,6,"press any key to play");
   },
 
   handleInput: function(inputType, inputData) {
@@ -36,7 +37,7 @@ Game.UIMode.gamePlay = {
 
   render: function (display) {
     console.log("render gamePlay");
-    display.drawText(5,5,"game start mode");
+    display.drawText(5,5,"game play mode");
   },
 
   handleInput: function(inputType, inputData) {
