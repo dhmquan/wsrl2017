@@ -10,17 +10,32 @@ window.onload = function() {
         Game.init();
 
         // Add the containers to our HTML page
-        document.getElementById('wsrl-main-display').appendChild(   Game.getDisplay('main').getContainer());
+        document.getElementById('wsrl-avatar-display').appendChild(Game.getDisplay('avatar').getContainer());
+        document.getElementById('wsrl-main-display').appendChild(Game.getDisplay('main').getContainer());
+        document.getElementById('wsrl-message-display').appendChild(Game.getDisplay('message').getContainer());
     }
 };
 
 var Game = {
 
+  _randomSeed: 0,
+  _DISPLAY_SPACING: 1.1,
   display: {
-    SPACING: 1.1,
     main: {
       w: 80,
       h: 24,
+      o: null
+    },
+
+    avatar: {
+      w: 20,
+      h: 24,
+      o: null
+    },
+
+    message: {
+      w: 100,
+      h: 6,
       o: null
     }
   },
@@ -31,10 +46,15 @@ var Game = {
     console.log("using random seed "+this._randomSeed);
     ROT.RNG.setSeed(this._randomSeed);
 
-    this.display.main.o = new ROT.Display({
-      width: this.display.main.w,
-      height: this.display.main.h,
-      spacing: Game.display.SPACING});
+    for (var display_key in this.display){
+      this.display[display_key].o = new ROT.Display({
+        width: this.display[display_key].w,
+        height: this.display[display_key].h,
+        spacing: Game._DISPLAY_SPACING});
+    }
+
+    console.dir(this.display);
+
     this.renderMain();
   },
 
