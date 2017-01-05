@@ -21,7 +21,7 @@ Game.UIMode.gameStart = {
       console.log("gameStart inputData:");
       console.dir(inputData);
       if(inputData.charCode != 0 ) { //ignore modding keys
-        Game.switchUIMode(Game.UIMode.gamePlay);
+        Game.switchUIMode(Game.UIMode.gamePersistence);
       }
   }
 };
@@ -53,6 +53,54 @@ Game.UIMode.gamePlay = {
           Game.switchUIMode(Game.UIMode.gameLose);
         }
       }
+  }
+};
+
+Game.UIMode.gamePersistence = {
+  enter: function() {
+    console.log("entered gamePersistence");
+  },
+
+  exit: function() {
+    console.log("exited gamePersistence");
+  },
+
+  render: function (display) {
+    console.log("render gamePersistence");
+    display.drawText(5,6,"S to save, L to load, N for a new game");
+  },
+
+  handleInput: function(inputType, inputData) {
+      console.log("input for gamePersistence");
+      if (inputType == 'keypress') { //ignore modding keys
+        if ((inputData.key == 'S') || ((inputData.key == 's') && (inputData.shiftKey))) {
+          if (this.localStorageAvailable()) {
+            window.localStorage.setItem(Game._PERSISTENCE_NAMESPACE, JSON.stringify(Game._game)); //.toJSON()
+            Game.switchUIMode(Game.UIMode.gameWin);
+          }
+        } else if ((inputData.key == 'L') || ((inputData.key == 'l') && (inputData.shiftKey))) {
+          var json_state_data = '{"randomSeed":12}';
+          var state_data = JSON.parse(json_state_data);
+          Game.setRandomSeed(state_data.randomSeed);
+          Game.switchUIMode(Game.UIMode.gamePlay);
+        } else if ((inputData.key == 'N') || ((inputData.key == 'n') && (inputData.shiftKey))) {
+          Game.setRandomSeed(5 + Math.floor(ROT.RNG.getUniform()*100000));
+          Game.switchUIMode(Game.UIMode.gamePlay);
+        }
+      }
+  },
+
+  localStorageAvailable: function() {
+    try {
+  		var x = '__storage_test__';
+  		window.localStorage.setItem(x, x);
+  		window.localStorage.removeItem(x);
+  		return true;
+  	}
+  	catch(e) {
+      Game.Message.send('Sorry, no local data storage is available for this browser');
+  		return false;
+  	}
   }
 };
 
