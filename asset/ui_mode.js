@@ -1,5 +1,8 @@
 Game.UIMode = {};
 
+Game.UIMode.DEFAULT_COLOR_FG;
+Game.UIMode.DEFAULT_COLOR_BG;
+
 Game.UIMode.gameStart = {
   enter: function() {
     console.log("entered gameStart");
@@ -27,6 +30,10 @@ Game.UIMode.gameStart = {
 };
 
 Game.UIMode.gamePlay = {
+  attr: {
+    _map: null
+  },
+
   enter: function() {
     console.log("game playing");
   },
@@ -40,6 +47,7 @@ Game.UIMode.gamePlay = {
     display.drawText(5,5,"game play mode");
     display.drawText(5,6,"W to win, L to lose, any other key to keep playing");
     display.drawText(5,7,"= to save, load or start a new game");
+    this.attr._map.renderOn(display);
   },
 
   handleInput: function(inputType, inputData) {
@@ -56,6 +64,23 @@ Game.UIMode.gamePlay = {
           Game.switchUIMode(Game.UIMode.gamePersistence);
         }
       }
+  },
+
+  setupPlay: function() {
+    var generator = new ROT.Map.Cellular(80,24);
+    generator.randomize(.5);
+    for (var i=0;i<3;i++) {
+      generator.create();
+    }
+    var tileArray = Game.util.init2DArray(80,24,Game.Tile.nullTile);
+    generator.create(function(x,y,val) {
+      if (val === 1) {
+        tileArray[x][y] = Game.Tile.floorTile;
+      } else {
+        tileArray[x][y] = Game.Tile.wallTile;
+      }
+    });
+    this.attr._map = new Game.Map(tileArray);
   }
 };
 
@@ -85,9 +110,11 @@ Game.UIMode.gamePersistence = {
           var json_state_data = '{"randomSeed":12}';
           var state_data = JSON.parse(json_state_data);
           Game.setRandomSeed(state_data.randomSeed);
+          Game.UIMode.gamePlay.setupPlay();
           Game.switchUIMode(Game.UIMode.gamePlay);
         } else if ((inputData.key == 'N') || ((inputData.key == 'n') && (inputData.shiftKey))) {
           Game.setRandomSeed(5 + Math.floor(ROT.RNG.getUniform()*100000));
+          Game.UIMode.gamePlay.setupPlay();
           Game.switchUIMode(Game.UIMode.gamePlay);
         }
       }

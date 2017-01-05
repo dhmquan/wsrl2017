@@ -1,6 +1,6 @@
 Game.Tile = function (name,symbol) {
   this.attr = {
-    _sym: symbol;
+    _sym: symbol,
     _name: name
   };
 };
