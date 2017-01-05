@@ -39,6 +39,7 @@ Game.UIMode.gamePlay = {
     console.log("render gamePlay");
     display.drawText(5,5,"game play mode");
     display.drawText(5,6,"W to win, L to lose, any other key to keep playing");
+    display.drawText(5,7,"= to save, load or start a new game");
   },
 
   handleInput: function(inputType, inputData) {
@@ -51,6 +52,8 @@ Game.UIMode.gamePlay = {
           Game.switchUIMode(Game.UIMode.gameWin);
         } else if ((inputData.key == 'L') || ((inputData.key == 'l') && (inputData.shiftKey))) {
           Game.switchUIMode(Game.UIMode.gameLose);
+        } else if (inputData.key == '=') {
+          Game.switchUIMode(Game.UIMode.gamePersistence);
         }
       }
   }
@@ -76,7 +79,7 @@ Game.UIMode.gamePersistence = {
         if ((inputData.key == 'S') || ((inputData.key == 's') && (inputData.shiftKey))) {
           if (this.localStorageAvailable()) {
             window.localStorage.setItem(Game._PERSISTENCE_NAMESPACE, JSON.stringify(Game._game)); //.toJSON()
-            Game.switchUIMode(Game.UIMode.gameWin);
+            Game.switchUIMode(Game.UIMode.gamePlay);
           }
         } else if ((inputData.key == 'L') || ((inputData.key == 'l') && (inputData.shiftKey))) {
           var json_state_data = '{"randomSeed":12}';

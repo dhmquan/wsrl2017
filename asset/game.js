@@ -108,8 +108,6 @@ var Game = {
   renderMain: function() {
     this.getDisplay("main").clear();
     this._curUIMode.render(this.getDisplay("main"));
-    //var d = this.getDisplay("main");
-      //d.drawText(5,5,"main display");
   },
 
   renderMessage: function() {
