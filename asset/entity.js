@@ -40,11 +40,11 @@ Game.Entity = function(template) {
 };
 Game.Entity.extend(Game.Symbol);
 
-Game.Entity.prototype.hasMixin = function(checkThis) {
-    if (typeof checkThis == 'object') {
-      return this._mixinTracker.hasOwnProperty(checkThis.META.mixinName);
+Game.Entity.prototype.hasMixin = function(property) {
+    if (typeof property == 'object') {
+      return this._mixinTracker.hasOwnProperty(property.META.mixinName);
     } else {
-      return this._mixinTracker.hasOwnProperty(checkThis);
+      return this._mixinTracker.hasOwnProperty(property);
     }
 };
 
