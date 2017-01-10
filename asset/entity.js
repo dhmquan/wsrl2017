@@ -9,7 +9,6 @@ Game.Entity = function(template) {
     this._entityID = Game.util.randomString(32);
     Game.ALL_ENTITIES[this._entityID] = this;
 
-    // mixin sutff
     // track mixins and groups, copy over non-META properties, and run the mixin init if it exists
     this._mixins = template.mixins || [];
     this._mixinTracker = {};

@@ -179,14 +179,14 @@ Game.UIMode.gamePlay = {
     this.setCamera(this.attr._avatar.getX(),this.attr._avatar.getY());
   },
   handleInput: function (inputType,inputData) {
-    var pressedKey = String.fromCharCode(inputData.charCode);
+    var pressedKey = inputData.key;
     Game.Message.send("you pressed the '"+String.fromCharCode(inputData.charCode)+"' key");
     Game.renderDisplayMessage();
     if (inputType == 'keypress') {
-      // console.log('gameStart inputType:'); // DEV
-      // console.dir(inputType);
-      // console.log('gameStart inputData:');
-      // console.dir(inputData);
+      console.log('gamePlay inputType:'); // DEV
+      console.dir(inputType);
+      console.log('gamePlay inputData:');
+      console.dir(inputData);
       if (inputData.keyIdentifier == 'Enter') {
         Game.switchUiMode(Game.UIMode.gameWin);
         return;
@@ -217,9 +217,16 @@ Game.UIMode.gamePlay = {
       // console.dir(inputData);
       if (inputData.keyCode == 27) { // 'Escape'
         Game.switchUiMode(Game.UIMode.gameLose);
-      }
-      else if (inputData.keyCode == 187) { // '='
+      } else if (inputData.keyCode == 187) { // '='
         Game.switchUiMode(Game.UIMode.gamePersistence);
+      } else if (inputData.keyCode == 37) { // 'ArrowLeft'
+        this.moveAvatar(-1,0);
+      } else if (inputData.keyCode == 38) { // 'ArrowUp'
+        this.moveAvatar(0,-1);
+      } else if (inputData.keyCode == 39) { // 'ArrowRight'
+        this.moveAvatar(1,0);
+      } else if (inputData.keyCode == 40) { // 'ArrowDown'
+        this.moveAvatar(0,1);
       }
     }
   },
