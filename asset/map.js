@@ -38,25 +38,28 @@ Game.Map.prototype.getRandomWalkableLocation = function() {
   return this.getRandomLocation(function(t){ return t.isWalkable(); });
 };
 
-Game.Map.prototype.renderOn = function (display) {
-  for (var xPos=0;xPos<this.attr._width;xPos++) {
-    for (var yPos=0;yPos<this.attr._height;yPos++) {
-      var s = this.getTile(xPos,yPos).getSymbol();
-      display.draw(xPos,yPos,s.getChar(),s.getFg(),s.getBg());
+Game.Map.prototype.renderOn = function (display,camX,camY) {
+  // console.log("display is ");
+  // console.dir(display);
+  var dispW = display._options.width;
+  var dispH = display._options.height;
+  var xStart = camX-Math.round(dispW/2);
+  var yStart = camY-Math.round(dispH/2);
+  for (var x = 0; x < dispW; x++) {
+    for (var y = 0; y < dispH; y++) {
+      // Fetch the glyph for the tile and render it to the screen - sub in wall tiles for nullTiles / out-of-bounds
+      var tile = this.getTile(x+xStart, y+yStart);
+      if (tile.getName() == 'nullTile') {
+        tile = Game.Tile.wallTile;
+      }
+      tile.draw(display,x,y);
     }
   }
-  // var dispW = display._options.width;
-  // var dispH = display._options.height;
-  // var xStart = camX-Math.round(dispW/2);
-  // var yStart = camY-Math.round(dispH/2);
-  // for (var x = 0; x < dispW; x++) {
-  //   for (var y = 0; y < dispH; y++) {
-  //     // Fetch the glyph for the tile and render it to the screen - sub in wall tiles for nullTiles / out-of-bounds
-  //     var tile = this.getTile(x+xStart, y+yStart);
-  //     if (tile.getName() == 'nullTile') {
-  //       tile = Game.Tile.wallTile;
-  //     }
-  //     tile.getSymbol().draw(display,x,y);
-  //   }
-  // }
+};
+
+Game.Map.prototype.toJSON = function () {
+  // do nothing.... for now....
+};
+Game.Map.prototype.fromJSON = function (json) {
+  // do nothing.... for now....
 };
