@@ -98,7 +98,7 @@ Game.UIMode.gamePersistence = {
     var json = {};
     for (var at in state) {
       if (state.hasOwnProperty(at)) {
-        if (state[at] instanceof Object && 'toJSON' in state[at]) {
+        if (state[at] instanceof Object && '' in state[at]) {
           json[at] = state[at].toJSON();
         } else {
           json[at] = state[at];
@@ -253,9 +253,11 @@ Game.UIMode.gamePlay = {
     // create map from the tiles
     this.attr._map =  new Game.Map(mapTiles);
 
-    this.attr._avatar = new Game.Entity(Game.EntityTemplates.Avatar);
+    this.attr._avatar = Game.EntityGenerator.generate('avatar');
 
     // restore anything else if the data is available
+    //console.log('restorationData');
+    //.dir(restorationData);
     if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
       this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
     } else {

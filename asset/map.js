@@ -25,17 +25,17 @@ Game.Map.prototype.getRandomLocation = function(filter_func) {
   if (filter_func === undefined) {
     filter_func = function(tile) { return true; };
   }
-  var tX,tY,t;
+  var tX,tY,tile;
   do {
     tX = Game.util.randomInt(0,this.attr._width - 1);
     tY = Game.util.randomInt(0,this.attr._height - 1);
-    t = this.getTile(tX,tY);
-  } while (! filter_func(t));
+    tile = this.getTile(tX,tY);
+  } while (! filter_func(tile));
   return {x:tX,y:tY};
 };
 
 Game.Map.prototype.getRandomWalkableLocation = function() {
-  return this.getRandomLocation(function(t){ return t.isWalkable(); });
+  return this.getRandomLocation(function(tile){ return tile.isWalkable(); });
 };
 
 Game.Map.prototype.renderOn = function (display,camX,camY) {

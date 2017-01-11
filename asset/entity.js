@@ -54,12 +54,12 @@ Game.Entity.prototype.getName = function() {
 Game.Entity.prototype.setName = function(name) {
     this.attr._name = name;
 };
-Game.Entity.prototype.setPos = function(x_or_xy,y) {
-  if (typeof x_or_xy == 'object') {
-    this.attr._x = x_or_xy.x;
-    this.attr._y = x_or_xy.y;
+Game.Entity.prototype.setPos = function(x_or_object,y) {
+  if (typeof x_or_object == 'object') {
+    this.attr._x = x_or_object.x;
+    this.attr._y = x_or_object.y;
   } else {
-    this.attr._x = x_or_xy;
+    this.attr._x = x_or_object;
     this.attr._y = y;
   }
 };
