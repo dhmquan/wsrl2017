@@ -8,10 +8,18 @@ Game.EntityMixin.WalkerCorporeal = {
     mixinGroup: 'Walker'
   },
   tryWalk: function (map,dx,dy) {
-    var targetX = Math.min(Math.max(0,this.getX() + dx),map.getWidth());
-    var targetY = Math.min(Math.max(0,this.getY() + dy),map.getHeight());
-    if (map.getTile(targetX,targetY).isWalkable()) {
-      this.setPos(targetX,targetY);
+    var x = Math.min(Math.max(0,this.getX() + dx),map.getWidth());
+    var y = Math.min(Math.max(0,this.getY() + dy),map.getHeight());
+    //can't walk where there's another entity
+    if (map.getEntity(x,y)) {
+      return false;
+    }
+
+    if (map.getTile(x,y).isWalkable()) {
+      this.setPos(x,y);
+      if (this._map) {
+        this._map.updateEntityPosition(this);
+      }
       if (this.hasMixin('Chronicle')) { // NOTE: this is sub-optimal because it couple this mixin to the Chronicle one (i.e. this needs to know the Chronicle function to call) - the event system will solve this issue
         this.trackTurn();
       }

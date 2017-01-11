@@ -255,6 +255,7 @@ Game.UIMode.gamePlay = {
 
     this.attr._avatar = Game.EntityGenerator.generate('avatar');
 
+    this.attr._avatar.setMap(this.attr._map);
     // restore anything else if the data is available
     //console.log('restorationData');
     //.dir(restorationData);
@@ -262,8 +263,12 @@ Game.UIMode.gamePlay = {
       this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
     } else {
       this.attr._avatar.setPos(this.attr._map.getRandomWalkableLocation());
+      for (var entityCount = 0; entityCount < 80; entityCount++) {
+        this.attr._map.addEntity(Game.EntityGenerator.generate('moss'),this.attr._map.getRandomWalkableLocation());
+      }
     }
 
+    this.attr._map.updateEntityPosition(this.attr._avatar);
     this.setCameraToAvatar();
   },
   toJSON: function() {
