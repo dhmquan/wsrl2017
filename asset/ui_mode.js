@@ -5,7 +5,7 @@ Game.UIMode.DEFAULT_COLOR_STR = '%c{'+Game.UIMode.DEFAULT_COLOR_FG+'}%b{'+Game.U
 
 Game.UIMode.gameStart = {
   enter: function () {
-    console.log('game starting');
+    //console.log('game starting');
     Game.Message.send("Welcome to WSRL");
     Game.refresh();
   },

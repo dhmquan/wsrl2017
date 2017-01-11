@@ -1,11 +1,15 @@
+Game.DATASTORE.MAP = {};
+
 Game.Map = function (tilesGrid) {
+  this._tiles = tilesGrid;
   this.attr = {
-    _tiles: tilesGrid,
+    _id: Game.util.randomString(32);
     _width: tilesGrid.length,
     _height: tilesGrid[0].length,
     _entitiesByPosition: {},
     _positionsByEntity: {}
   };
+  Game.DATASTORE.MAP[this.attr._id] = this;
 };
 
 Game.Map.prototype.getWidth = function () {
@@ -25,11 +29,11 @@ Game.Map.prototype.getTile = function (x_or_pos,y) {
   if ((useX < 0) || (useX >= this.attr._width) || (useY<0) || (useY >= this.attr._height)) {
     return Game.Tile.nullTile;
   }
-  return this.attr._tiles[useX][useY] || Game.Tile.nullTile;
+  return this._tiles[useX][useY] || Game.Tile.nullTile;
 };
 
 Game.Map.prototype.addEntity = function (entity, pos) {
-  this.attr._entitiesByPosition[pos.x + "," + pos.y] = entity;
+  this.attr._entitiesByPosition[pos.x + "," + pos.y] = entity.getId();
   this.attr._positionsByEntity[entity.getId()] = pos.x + "," + pos.y;
   entity.setMap(this);
 };
@@ -40,7 +44,9 @@ Game.Map.prototype.getEntity = function (x_or_pos,y) {
     useX = x_or_pos.x;
     useY = x_or_pos.y;
   }
-  return this.attr._entitiesByPosition[useX + "," + useY] || false;
+  var entityId = this.attr._entitiesByPosition[useX + "," + useY];
+  if (entityId) {return Game.DATASTORE.ENTITY[entityId];}
+  return false;
 };
 
 Game.Map.prototype.updateEntityPosition = function (entity) {
@@ -51,7 +57,7 @@ Game.Map.prototype.updateEntityPosition = function (entity) {
   }
   //create new image in new position
   var pos = entity.getPos();
-  this.attr._entitiesByPosition[pos.x + "," + pos.y] = entity;
+  this.attr._entitiesByPosition[pos.x + "," + pos.y] = entity.getId();
   this.attr._positionsByEntity[entity.getId()] = pos.x + "," + pos.y;
 };
 
