@@ -30,6 +30,8 @@ Game.UIMode.gameStart = {
 };
 
 Game.UIMode.gamePersistence = {
+  RANDOM_SEED_KEY: 'gameRandomSeed',
+
   enter: function () {
     Game.refresh();
     console.log('game persistence');
@@ -58,9 +60,11 @@ Game.UIMode.gamePersistence = {
       this.newGame();
     }
   },
-  saveGame: function (json_state_data) {
+  saveGame: function () {
     if (this.localStorageAvailable()) {
-      window.localStorage.setItem(Game._PERSISTANCE_NAMESPACE, JSON.stringify(Game._game)); // .toJSON()
+      //window.localStorage.setItem(Game._PERSISTANCE_NAMESPACE, JSON.stringify(Game._game)); // .toJSON()
+      Game.DATASTORE.GAME_PLAY = Game.UIMode.gamePlay.attr;
+      window.localStorage.setItem(Game._PERSISTANCE_NAMESPACE,JSON.stringify(Game.DATASTORE));
       Game.switchUiMode(Game.UIMode.gamePlay);
     }
   },
@@ -68,8 +72,21 @@ Game.UIMode.gamePersistence = {
     if (this.localStorageAvailable()) {
       var json_state_data = window.localStorage.getItem(Game._PERSISTANCE_NAMESPACE);
       var state_data = JSON.parse(json_state_data);
-      Game.setRandomSeed(state_data._randomSeed);
-      Game.UIMode.gamePlay.setupPlay(state_data);
+
+      console.log('state data: ');
+      console.dir(state_data);
+
+      //game seed
+      Game.setRandomSeed(state_data[this.RANDOM_SEED_KEY]);
+
+      for (var mapId in state_data.MAP) {
+        if (state_data.MAP.hasOwnProperty(mapId)) {
+          var mapAttr
+        }
+      }
+
+      //gameplay
+      Game.UIMode.gamePlay.attr = state_data.GAME_PLAY;
       Game.switchUiMode(Game.UIMode.gamePlay);
     }
   },

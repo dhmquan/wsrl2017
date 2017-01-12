@@ -1,15 +1,22 @@
 Game.DATASTORE.MAP = {};
 
-Game.Map = function (tilesGrid) {
-  this._tiles = tilesGrid;
+Game.Map = function (tileSetName) {
+  console.log("setting up new map using " + tileSetName + " tileset");
+  this._tiles = Game.TileSets[tileSetName].getTiles();
+
   this.attr = {
     _id: Game.util.randomString(32);
+    _tileSetName: tileSetName,
     _width: tilesGrid.length,
     _height: tilesGrid[0].length,
     _entitiesByPosition: {},
     _positionsByEntity: {}
   };
   Game.DATASTORE.MAP[this.attr._id] = this;
+};
+
+Game.Map.prototype.getId = function () {
+  return this.attr._id;
 };
 
 Game.Map.prototype.getWidth = function () {
@@ -104,8 +111,9 @@ Game.Map.prototype.renderOn = function (display,camX,camY) {
 };
 
 Game.Map.prototype.toJSON = function () {
-  // do nothing.... for now....
+  var json = Game.UIMode.gamePersistence.BASE_toJSON.call(this);
+  return json;
 };
 Game.Map.prototype.fromJSON = function (json) {
-  // do nothing.... for now....
+  Game.UIMode.gamePersistence.BASE_fromJSON.call(this,json);
 };

@@ -1,7 +1,7 @@
 //constructor takes a Game.Entity, defaultTemplate takes a Game.EntityTemplates
-Game.Generator = function (genName, constrFuction, defaultTemplate) {
+Game.Generator = function (genName, constrFunction, defaultTemplate) {
   this._name = genName;
-  this._constructor = constrFuction;
+  this._constructor = constrFunction;
 
   this._templates = {};
   this._templates._DEFAULT = defaultTemplate || {};

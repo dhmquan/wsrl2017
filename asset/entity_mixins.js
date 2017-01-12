@@ -17,10 +17,11 @@ Game.EntityMixin.WalkerCorporeal = {
 
     if (map.getTile(x,y).isWalkable()) {
       this.setPos(x,y);
-      if (this._map) {
-        this._map.updateEntityPosition(this);
+      var curMap = this.getMap();
+      if (curMap) {
+        curMap.updateEntityPosition(this);
       }
-      if (this.hasMixin('Chronicle')) { // NOTE: this is sub-optimal because it couple this mixin to the Chronicle one (i.e. this needs to know the Chronicle function to call) - the event system will solve this issue
+      if (this.hasMixin('Chronicle')) { // NOTE: this is sub-optimal because it couples this mixin to the Chronicle one (i.e. this needs to know the Chronicle function to call) - the event system will solve this issue
         this.trackTurn();
       }
       return true;
