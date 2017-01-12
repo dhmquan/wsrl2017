@@ -57,7 +57,7 @@ Game.Entity.prototype.getId = function() {
 };
 
 Game.Entity.prototype.getMap = function() {
-  return GAME.DATASTORE.MAP[this.attr._mapId];
+  return Game.DATASTORE.MAP[this.attr._mapId];
 };
 
 Game.Entity.prototype.setMap = function(map) {

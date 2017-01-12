@@ -5,10 +5,10 @@ Game.Map = function (tileSetName) {
   this._tiles = Game.TileSets[tileSetName].getTiles();
 
   this.attr = {
-    _id: Game.util.randomString(32);
+    _id: Game.util.randomString(32),
     _tileSetName: tileSetName,
-    _width: tilesGrid.length,
-    _height: tilesGrid[0].length,
+    _width: this._tiles.length,
+    _height: this._tiles[0].length,
     _entitiesByPosition: {},
     _positionsByEntity: {}
   };

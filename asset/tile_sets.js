@@ -1,7 +1,7 @@
 Game.TileSets = {
   caves1: {
-    _width: 75,
-    _height: 50,
+    _width: 300,
+    _height: 200,
 
     getTiles: function () {
       var tiles = Game.util.init2DArray(this._width,this._height,Game.Tile.nullTile);
@@ -16,7 +16,7 @@ Game.TileSets = {
 
       //run generator again to create map
       generator.create(function(x,y,val) {
-        if (v === 1) {
+        if (val === 1) {
           tiles[x][y] = Game.Tile.floorTile;
         } else {
           tiles[x][y] = Game.Tile.wallTile;
