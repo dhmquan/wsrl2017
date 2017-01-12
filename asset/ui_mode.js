@@ -5,19 +5,20 @@ Game.UIMode.DEFAULT_COLOR_STR = '%c{'+Game.UIMode.DEFAULT_COLOR_FG+'}%b{'+Game.U
 
 Game.UIMode.gameStart = {
   enter: function () {
-    //console.log('game starting');
     Game.Message.send("Welcome to WSRL");
     Game.refresh();
   },
   exit: function () {
     Game.refresh();
   },
+
   render: function (display) {
     var fg = Game.UIMode.DEFAULT_COLOR_FG;
     var bg = Game.UIMode.DEFAULT_COLOR_BG;
     display.drawText(1,1,"game start",fg,bg);
     display.drawText(1,3,"press any key to continue",fg,bg);
   },
+
   handleInput: function (inputType,inputData) {
   //  console.log('gameStart inputType:');
   //  console.dir(inputType);
@@ -34,11 +35,12 @@ Game.UIMode.gamePersistence = {
 
   enter: function () {
     Game.refresh();
-    console.log('game persistence');
+    //console.log('game persistence');
   },
   exit: function () {
     Game.refresh();
   },
+
   render: function (display) {
     var fg = Game.UIMode.DEFAULT_COLOR_FG;
     var bg = Game.UIMode.DEFAULT_COLOR_BG;
@@ -46,24 +48,32 @@ Game.UIMode.gamePersistence = {
 //    console.log('TODO: check whether local storage has a game before offering restore');
 //    console.log('TODO: check whether a game is in progress before offering restore');
   },
+
   handleInput: function (inputType,inputData) {
   //  console.log('gameStart inputType:');
   //  console.dir(inputType);
   //  console.log('gameStart inputData:');
   //  console.dir(inputData);
-    var inputChar = String.fromCharCode(inputData.charCode);
-    if (inputChar == 'S') { // ignore the various modding keys - control, shift, etc.
-      this.saveGame();
-    } else if (inputChar == 'L') {
-      this.restoreGame();
-    } else if (inputChar == 'N') {
-      this.newGame();
+    if (inputType == 'keypress'){
+      var inputChar = String.fromCharCode(inputData.charCode);
+      if (inputChar == 'S') { // ignore the various modding keys - control, shift, etc.
+        this.saveGame();
+      } else if (inputChar == 'L') {
+        this.restoreGame();
+      } else if (inputChar == 'N') {
+        this.newGame();
+      }
+    } else if (inputType == 'keydown') {
+      if (inputData.keyCode == 27) { //'Escape'
+        Game.switchUiMode(Game.UIMode.gamePlay);
+      }
     }
   },
+
   saveGame: function () {
     if (this.localStorageAvailable()) {
-      //window.localStorage.setItem(Game._PERSISTANCE_NAMESPACE, JSON.stringify(Game._game)); // .toJSON()
       Game.DATASTORE.GAME_PLAY = Game.UIMode.gamePlay.attr;
+      Game.DATASTORE.MESSAGES = Game.Message.attr;
       window.localStorage.setItem(Game._PERSISTANCE_NAMESPACE,JSON.stringify(Game.DATASTORE));
       Game.switchUiMode(Game.UIMode.gamePlay);
     }
@@ -72,7 +82,6 @@ Game.UIMode.gamePersistence = {
     if (this.localStorageAvailable()) {
       var json_state_data = window.localStorage.getItem(Game._PERSISTANCE_NAMESPACE);
       var state_data = JSON.parse(json_state_data);
-
       console.log('state data: ');
       console.dir(state_data);
 
@@ -101,11 +110,12 @@ Game.UIMode.gamePersistence = {
 
       //gameplay
       Game.UIMode.gamePlay.attr = state_data.GAME_PLAY;
+      Game.Message.attr = state_data.MESSAGES;
       Game.switchUiMode(Game.UIMode.gamePlay);
     }
   },
   newGame: function () {
-    Game.setRandomSeed(5 + Math.floor(ROT.RNG.getUniform()*100000));
+    Game.setRandomSeed(5 + Math.floor(Game.RNG.getUniform()*100000));
     Game.UIMode.gamePlay.setupNewGame();
     Game.switchUiMode(Game.UIMode.gamePlay);
   },
@@ -165,8 +175,8 @@ Game.UIMode.gamePlay = {
   },
   JSON_KEY: 'uiMode_gamePlay',
   enter: function () {
-    console.log('game playing');
-    Game.Message.clear();
+    //console.log('game playing');
+    //Game.Message.clear();
     if (this.attr._avatarId) {
       this.setCameraToAvatar;
     }
@@ -181,7 +191,6 @@ Game.UIMode.gamePlay = {
     var bg = Game.UIMode.DEFAULT_COLOR_BG;
     this.getMap().renderOn(display,this.attr._cameraX,this.attr._cameraY);
     display.drawText(1,1,"game play",fg,bg); // DEV
-    display.drawText(1,5,"press = to save, restore, or start a new game",fg,bg);
     this.renderAvatar(display);
   },
   renderAvatar: function (display) {
@@ -212,17 +221,13 @@ Game.UIMode.gamePlay = {
   },
   handleInput: function (inputType,inputData) {
     var pressedKey = inputData.key;
-    Game.Message.send("you pressed the '"+String.fromCharCode(inputData.charCode)+"' key");
-    Game.renderDisplayMessage();
     if (inputType == 'keypress') {
+      //Game.Message.send("you pressed the '"+String.fromCharCode(inputData.charCode)+"' key");
       console.log('gamePlay inputType:'); // DEV
       console.dir(inputType);
       console.log('gamePlay inputData:');
       console.dir(inputData);
-      if (inputData.keyIdentifier == 'Enter') {
-        Game.switchUiMode(Game.UIMode.gameWin);
-        return;
-      } else if (pressedKey == '1') {
+      if (pressedKey == '1') {
         this.moveAvatar(-1,1);
       } else if (pressedKey == '2') {
         this.moveAvatar(0,1);
@@ -230,8 +235,6 @@ Game.UIMode.gamePlay = {
         this.moveAvatar(1,1);
       } else if (pressedKey == '4') {
         this.moveAvatar(-1,0);
-      } else if (pressedKey == '5') {
-        // do nothing / stay still
       } else if (pressedKey == '6') {
         this.moveAvatar(1,0);
       } else if (pressedKey == '7') {
@@ -240,7 +243,11 @@ Game.UIMode.gamePlay = {
         this.moveAvatar(0,-1);
       } else if (pressedKey == '9') {
         this.moveAvatar(1,-1);
+      } else if (pressedKey == '=') {
+        Game.switchUiMode(Game.UIMode.gamePersistence);
+        return;
       }
+      Game.Message.ageMessages();
     }
     else if (inputType == 'keydown') {
       // console.log('gameStart inputType:');
