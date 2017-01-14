@@ -7,7 +7,7 @@ Game.EntityMixin.PlayerMessenger = {
     mixinName: 'PlayerMessenger',
     mixinGroup: 'PlayerMessenger',
     listeners: {
-      'unwalkable': function(event) {
+      'unwalkable': function(evt) {
         Game.Message.send('you can\'t walk into the ' + event.target.getName());
         Game.renderDisplayMessage();
       },
@@ -40,9 +40,10 @@ Game.EntityMixin.WalkerCorporeal = {
   tryWalk: function (map,dx,dy) {
     var x = Math.min(Math.max(0,this.getX() + dx),map.getWidth());
     var y = Math.min(Math.max(0,this.getY() + dy),map.getHeight());
-    //can't walk where there's another entity
     if (map.getEntity(x,y)) {
-      return false;
+      this.raiseEntityEvent( 'bumpEntity',{actor:this,recipient:map.getEntity(x,y)}); //bumpEntity always took turn for now
+      this.raiseEntityEvent('tookTurn');
+      return true;
     }
 
     var tile = map.getTile(x,y);
@@ -52,12 +53,10 @@ Game.EntityMixin.WalkerCorporeal = {
       if (curMap) {
         curMap.updateEntityPosition(this);
       }
-      if (this.hasMixin('Chronicle')) { // NOTE: this is sub-optimal because it couples this mixin to the Chronicle one (i.e. this needs to know the Chronicle function to call) - the event system will solve this issue
-        this.trackTurn();
-      }
+      this.raiseEntityEvent('tookTurn');
       return true;
     } //else {
-      //this.raiseEvent('unwalkable',{target:tile});
+      //this.raiseEntityEvent('unwalkable',{target:tile});
     //}
     return false;
   }
@@ -69,9 +68,24 @@ Game.EntityMixin.Chronicle = {
     mixinGroup: 'Chronicle',
     stateNamespace: '_Chronicle_attr',
     stateModel:  {
-      turnCounter: 0
+      turnCounter: 0,
+      killLog:{},
+      deathMessage:''
+    }
+    listeners: {
+      'tookTurn': function(evt) {
+        this.trackTurn();
+      },
+      'kill': function(evt) {
+        console.log('chronicle kill');
+        this.addKill(evt.entityKilled);
+      },
+      'killed': function(evt) {
+        this.attr._Chronicle_attr.deathMessage = 'killed by ' + evt.killedBy.getName();
+      }
     }
   },
+
   trackTurn: function () {
     this.attr._Chronicle_attr.turnCounter++;
   },
@@ -80,6 +94,20 @@ Game.EntityMixin.Chronicle = {
   },
   setTurns: function (n) {
     this.attr._Chronicle_attr.turnCounter = n;
+  },
+
+  getKillLog: function () {
+    return this.attr._Chronicle_attr.killLog;
+  },
+
+  clearKillLog: function () {
+    this.attr._Chronicle_attr.killLog = {};
+  },
+
+  addKill: function (entityKilled) {
+    var entityName = entityKilled.getName();
+    console.log('chronicle kill of ' + entityName);
+    if (this.attr.)
   }
 };
 
